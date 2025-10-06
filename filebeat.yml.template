@@ -1,0 +1,18 @@
+# Configuration Filebeat pour envoyer les logs Snort vers Elasticsearch
+filebeat.inputs:
+  - type: log
+    enabled: true
+    # Lit les logs formatés par syslog-ng
+    paths:
+      - /var/log/snort/syslog.out
+    fields:
+      log_source: "snort"
+      log_type: "security_alert"
+
+# Envoie les logs vers Elasticsearch
+output.elasticsearch:
+  hosts: ["http://localhost:9200"]
+
+# Configure Kibana
+setup.kibana:
+  host: "http://localhost:5601"

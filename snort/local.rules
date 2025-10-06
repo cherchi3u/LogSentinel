@@ -1,0 +1,22 @@
+# Règles personnalisées Snort pour détecter les attaques du projet
+# SID >= 1000000 pour éviter les conflits avec les règles officielles
+
+# 1000001 : Détection de scan de ports SYN
+# Détecte quand un attaquant envoie beaucoup de paquets SYN rapidement
+alert tcp any any -> any any (msg:"Possible SYN scan"; flags:S; detection_filter: track by_src, count 20, seconds 3; sid:1000001; rev:1;)
+
+# 1000002 : Détection d'injection SQL
+# Détecte les tentatives d'injection SQL contenant "UNION SELECT" dans l'URL
+alert tcp any any -> any 80 (msg:"WEB SQLi attempt (uri)"; content:"UNION SELECT"; nocase; http_uri; sid:1000002; rev:2;)
+
+# 1000003 : Détection de Local File Inclusion (LFI)
+# Détecte les tentatives d'accès au fichier /etc/passwd
+alert tcp any any -> any 80 (msg:"WEB LFI request attempt - /etc/passwd"; flow:to_server,established; content:"/etc/passwd"; http_uri; nocase; classtype:web-application-attack; sid:1000003; rev:1;)
+
+# 1000004 : Détection de brute-force SSH
+# Détecte quand quelqu'un essaie de se connecter en SSH trop souvent
+alert tcp any any -> any 22 (msg:"SSH brute force suspect"; detection_filter: track by_src, count 10, seconds 60; sid:1000004; rev:1;)
+
+# 1000005 : Détection d'exploitation PHP
+# Détecte les tentatives d'exploitation de paramètres PHP dans l'URL
+alert tcp any any -> any 80 (msg:"PHP exploit param"; content:".php?"; nocase; http_uri; sid:1000005; rev:2;)

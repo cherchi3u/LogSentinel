@@ -1,0 +1,50 @@
+# Configuration Docker Compose pour le système SIEM
+services:
+  # Elasticsearch pour stocker les logs
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  # Kibana pour visualiser les logs
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.2
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  # Base de données pour DVWA
+  dvwa_db:
+    image: mariadb:10.6
+    environment:
+      MYSQL_DATABASE: dvwa
+      MYSQL_USER: dvwa
+      MYSQL_PASSWORD: dvwa
+      MYSQL_ROOT_PASSWORD: rootpw
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  # DVWA : application vulnérable pour les tests
+  dvwa:
+    image: vulnerables/web-dvwa
+    depends_on:
+      - dvwa_db
+    environment:
+      - MYSQL_HOST=dvwa_db
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwa
+      - MYSQL_DATABASE=dvwa
+    network_mode: "host"
+
+volumes:
+  esdata:
+  dbdata:
