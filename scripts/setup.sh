@@ -2,6 +2,10 @@
 
 # On met à jour la liste des paquets et on installe les outils de base nécessaires
 apt update
+
+# On préconfigure Postfix pour éviter la fenêtre de configuration interactive
+echo "postfix postfix/main_mailer_type select No configuration" | debconf-set-selections
+
 apt install -y curl ca-certificates gnupg lsb-release apt-transport-https software-properties-common openssh-server mailutils
 
 echo "=== DEBUT setup.sh ==="
