@@ -1,5 +1,7 @@
 # Projet SIEM - Détection d'intrusions
 
+CHERCHI Matteo - Amolitho BALDE - Samuel MIDETE
+
 ## Objectif
 
 Mettre en place un mini-SIEM local qui détecte et remonte des attaques courantes contre une application volontairement vulnérable (DVWA). Le système utilise une chaîne technique complète : Snort (détection) → syslog-ng (collecte) → Filebeat (expédition) → Elasticsearch (stockage) → Kibana (visualisation) + envoi d'alertes par email.
